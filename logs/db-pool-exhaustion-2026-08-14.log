@@ -1,0 +1,5 @@
+2026-08-14T02:31:00Z db-pool INFO  pool=primary size=20 in_use=18 waiting=0
+2026-08-14T02:31:45Z db-pool WARN  pool=primary size=20 in_use=20 waiting=6 note="pool at capacity"
+2026-08-14T02:31:50Z auth-service ERROR request_id=e7f2 note="connection pool exhausted, could not acquire connection within 5000ms"
+2026-08-14T02:31:52Z auth-service ERROR request_id=e7f3 note="connection pool exhausted, could not acquire connection within 5000ms"
+2026-08-14T02:33:10Z db-pool INFO  pool=primary size=20 in_use=9 waiting=0 note="pool pressure resolved after autoscale"

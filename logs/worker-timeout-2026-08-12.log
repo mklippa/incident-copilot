@@ -1,0 +1,4 @@
+2026-08-12T09:12:03Z report-worker INFO  job_id=job-8891 customer_id=CUST-0007 rows=6210 status=started
+2026-08-12T09:12:33Z report-worker WARN  job_id=job-8891 customer_id=CUST-0007 rows=6210 elapsed_ms=30000 note="approaching timeout threshold"
+2026-08-12T09:12:34Z report-worker ERROR job_id=job-8891 customer_id=CUST-0007 rows=6210 status=timeout note="job exceeded 30s execution limit"
+2026-08-12T09:15:10Z report-worker INFO  job_id=job-8892 customer_id=CUST-0003 rows=412 elapsed_ms=890 status=completed

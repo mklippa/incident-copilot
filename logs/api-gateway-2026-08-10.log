@@ -1,0 +1,7 @@
+2026-08-10T14:02:11Z api-gateway INFO  request_id=a1f9 method=GET path=/v1/reports status=200 latency_ms=182
+2026-08-10T14:02:47Z api-gateway INFO  request_id=b2c0 method=GET path=/v1/dashboard status=200 latency_ms=210
+2026-08-10T14:03:15Z api-gateway WARN  request_id=c3d1 method=GET path=/v1/dashboard status=200 latency_ms=4820 note="latency above p99 threshold"
+2026-08-10T14:03:16Z api-gateway WARN  request_id=c3d2 method=GET path=/v1/reports status=200 latency_ms=5110 note="latency above p99 threshold"
+2026-08-10T14:03:20Z api-gateway ERROR request_id=c3d3 method=POST path=/v1/export status=503 latency_ms=30000 note="upstream timeout: report-worker"
+2026-08-10T14:03:22Z api-gateway ERROR request_id=c3d4 method=POST path=/v1/export status=503 latency_ms=30000 note="upstream timeout: report-worker"
+2026-08-10T14:05:01Z api-gateway INFO  request_id=d4e5 method=GET path=/v1/dashboard status=200 latency_ms=240 note="latency recovered"
