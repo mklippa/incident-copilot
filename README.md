@@ -37,6 +37,8 @@ A hand-rolled agentic loop (not the Agent SDK) that classifies every ticket in t
 - `get_recent_logs` — filter synthetic log lines by keyword and/or level
 - `create_refund` — issue a refund and record it as a resolution against a ticket
 
+It also exposes each runbook article as an individually readable MCP resource (`runbook://<filename>`), complementing `search_knowledge_base`: list resources to see every article's title and URI, then read one directly to get its full markdown body.
+
 Run the smoke test to exercise all four tools end-to-end, including the deliberate edge cases (empty KB search result vs. simulated DB outage, the two contradictory refund-policy articles surfacing together):
 
 ```bash

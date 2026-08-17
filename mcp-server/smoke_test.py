@@ -127,6 +127,20 @@ async def main() -> None:
             tool_json(result).get("errorCategory") == "invalid_input",
         )
 
+        # runbook resources: listed and individually readable
+        resources = await client.list_resources()
+        uris = {str(r.uri) for r in resources.resources}
+        check(
+            "list_resources() includes both contradictory refund-policy runbooks",
+            {"runbook://kb-001-refund-policy-2025-01.md", "runbook://kb-002-refund-policy-2026-06.md"} <= uris,
+        )
+
+        result = await client.read_resource("runbook://kb-001-refund-policy-2025-01.md")
+        check(
+            "read_resource(kb-001) returns the article's markdown body",
+            "refund" in result.contents[0].text.lower(),
+        )
+
     print("\nAll smoke tests passed.")
 
 

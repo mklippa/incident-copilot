@@ -265,5 +265,36 @@ def create_refund(
     }
 
 
+def _make_runbook_reader(path: Path):
+    def _read_runbook() -> str:
+        return path.read_text(encoding="utf-8")
+
+    return _read_runbook
+
+
+def _register_runbook_resources() -> None:
+    """Expose each runbook article as an individually readable MCP resource.
+
+    Complements search_knowledge_base (keyword search over excerpts): a
+    client can list these resources to see every article's title/URI, then
+    read one directly by URI to get its full markdown body.
+    """
+    for path in sorted(RUNBOOKS_DIR.glob("*.md")):
+        text = path.read_text(encoding="utf-8")
+        title_match = TITLE_RE.search(text)
+        title = title_match.group(1) if title_match else path.stem
+
+        server.resource(
+            f"runbook://{path.name}",
+            name=path.stem,
+            title=title,
+            description=f"Full text of runbook article '{title}'.",
+            mime_type="text/markdown",
+        )(_make_runbook_reader(path))
+
+
+_register_runbook_resources()
+
+
 if __name__ == "__main__":
     server.run()
