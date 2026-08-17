@@ -43,6 +43,12 @@ Run the smoke test to exercise all four tools end-to-end, including the delibera
 uv run python mcp-server/smoke_test.py
 ```
 
+For interactive, by-hand testing, use the official [MCP Inspector](https://github.com/modelcontextprotocol/inspector) instead — it launches a local web UI to call each tool through a form and inspect raw request/response JSON:
+
+```bash
+npx @modelcontextprotocol/inspector uv run python mcp-server/server.py
+```
+
 ### Why a custom server, and why also a community one
 
 `.mcp.json` also wires in the official `@modelcontextprotocol/server-filesystem`, scoped to `runbooks/` and `logs/`, purely as a comparison exercise. We didn't build our own "list/read files in a directory" tool because that's exactly what the filesystem server already does safely (scoped path access, traversal protection) — there's no reason to reimplement it.
