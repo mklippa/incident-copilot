@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "incident-copilot": {
+      "command": "uv",
+      "args": ["run", "python", "mcp-server/server.py"]
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "./runbooks", "./logs"]
+    }
+  }
+}
