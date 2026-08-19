@@ -11,24 +11,22 @@ Requires ANTHROPIC_API_KEY in the environment (or a .env file).
 """
 
 import json
-import logging
 import os
-from pathlib import Path
 
 from anthropic import Anthropic
 from dotenv import load_dotenv
 
 from incident_copilot.db import connect
+from incident_copilot.paths import DATA_DIR
+from incident_copilot.run_logging import configure_run_logging
 
 load_dotenv()
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-log = logging.getLogger("classify_loop")
+log = configure_run_logging("classify_loop")
 
 MODEL = os.environ.get("MODEL") or "claude-haiku-4-5-20251001"
 MAX_ITERATIONS = 3
 
-RESULTS_PATH = Path(__file__).resolve().parent.parent / "data" / "classification_results.jsonl"
+RESULTS_PATH = DATA_DIR / "classification_results.jsonl"
 
 CLASSIFY_TICKET_TOOL = {
     "name": "classify_ticket",
@@ -163,6 +161,13 @@ def build_ticket_prompt(ticket: dict) -> str:
     return f"Subject: {ticket['subject']}\n\n{ticket['body']}"
 
 
+def tool_result_message(tool_use_id: str, content: str) -> dict:
+    return {
+        "role": "user",
+        "content": [{"type": "tool_result", "tool_use_id": tool_use_id, "content": content}],
+    }
+
+
 def classify_ticket(ticket: dict, client: Anthropic) -> dict:
     messages = [{"role": "user", "content": build_ticket_prompt(ticket)}]
     result = None
@@ -185,19 +190,10 @@ def classify_ticket(ticket: dict, client: Anthropic) -> dict:
             tool_block = next(b for b in response.content if b.type == "tool_use")
             result = tool_block.input
             messages.append(
-                {
-                    "role": "user",
-                    "content": [
-                        {
-                            "type": "tool_result",
-                            "tool_use_id": tool_block.id,
-                            "content": (
-                                f"Recorded: category={result.get('category')}, "
-                                f"severity={result.get('severity')}."
-                            ),
-                        }
-                    ],
-                }
+                tool_result_message(
+                    tool_block.id,
+                    f"Recorded: category={result.get('category')}, severity={result.get('severity')}.",
+                )
             )
             continue
 

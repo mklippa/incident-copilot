@@ -8,15 +8,11 @@ Usage: uv run python -m incident_copilot.generate_data
 
 import random
 from datetime import datetime, timedelta
-from pathlib import Path
 
 from incident_copilot.db import connect, reset_schema
+from incident_copilot.paths import LOGS_DIR, RUNBOOKS_DIR
 
 SEED = 42
-
-REPO_ROOT = Path(__file__).resolve().parent.parent
-RUNBOOKS_DIR = REPO_ROOT / "runbooks"
-LOGS_DIR = REPO_ROOT / "logs"
 
 PLANS = ["free", "pro", "enterprise"]
 

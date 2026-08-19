@@ -9,14 +9,13 @@ prompt), not accumulated turn-by-turn like the Coordinator's own loop.
 
 import asyncio
 import os
-from pathlib import Path
 
 from claude_agent_sdk import AgentDefinition, ClaudeAgentOptions, ClaudeSDKClient, ResultMessage
 
+from incident_copilot.paths import REPO_ROOT
+
 MCP_CONNECT_TIMEOUT_S = 10
 MCP_CONNECT_POLL_INTERVAL_S = 0.5
-
-REPO_ROOT = Path(__file__).resolve().parent.parent
 
 MCP_SERVERS_CONFIG = {
     "incident-copilot": {

@@ -31,26 +31,29 @@ Requires ANTHROPIC_API_KEY in the environment (or a .env file).
 
 import asyncio
 import json
-import logging
 import os
-from pathlib import Path
 
 from anthropic import AsyncAnthropic
 from dotenv import load_dotenv
 
-from incident_copilot.classify_loop import CLASSIFY_TICKET_TOOL, SYSTEM_PROMPT as CLASSIFY_SYSTEM_PROMPT
+from incident_copilot.classify_loop import (
+    CLASSIFY_TICKET_TOOL,
+    SYSTEM_PROMPT as CLASSIFY_SYSTEM_PROMPT,
+    build_ticket_prompt,
+    tool_result_message,
+)
 from incident_copilot.db import connect
+from incident_copilot.paths import DATA_DIR
+from incident_copilot.run_logging import configure_run_logging
 from incident_copilot.specialists import run_specialist
 
 load_dotenv()
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-log = logging.getLogger("coordinator")
+log = configure_run_logging("coordinator")
 
 MODEL = os.environ.get("MODEL") or "claude-haiku-4-5-20251001"
 MAX_ITERATIONS = 5
 
-RESULTS_PATH = Path(__file__).resolve().parent.parent / "data" / "investigation_results.jsonl"
+RESULTS_PATH = DATA_DIR / "investigation_results.jsonl"
 
 # Task 1.6: fixed decomposition for known categories. Anything else (e.g.
 # "other", or a null/unrecognized category) falls through to the dynamic,
@@ -156,17 +159,6 @@ call any tool again.
 )
 
 
-def build_ticket_prompt(ticket: dict) -> str:
-    return f"Subject: {ticket['subject']}\n\n{ticket['body']}"
-
-
-def _tool_result(tool_use_id: str, text: str) -> dict:
-    return {
-        "role": "user",
-        "content": [{"type": "tool_result", "tool_use_id": tool_use_id, "content": text}],
-    }
-
-
 async def investigate_ticket(ticket: dict, client: AsyncAnthropic) -> dict:
     messages = [{"role": "user", "content": build_ticket_prompt(ticket)}]
 
@@ -209,7 +201,7 @@ async def investigate_ticket(ticket: dict, client: AsyncAnthropic) -> dict:
             if tool_block.name == "classify_ticket":
                 classification = result
                 messages.append(
-                    _tool_result(
+                    tool_result_message(
                         tool_block.id,
                         f"Recorded: category={result.get('category')}, severity={result.get('severity')}.",
                     )
@@ -238,13 +230,13 @@ async def investigate_ticket(ticket: dict, client: AsyncAnthropic) -> dict:
                     result.get("reasoning"),
                 )
                 messages.append(
-                    _tool_result(tool_block.id, f"Selected specialists: {specialists_to_run}.")
+                    tool_result_message(tool_block.id, f"Selected specialists: {specialists_to_run}.")
                 )
                 phase = "dispatch"
 
             elif tool_block.name == "draft_resolution":
                 draft = result
-                messages.append(_tool_result(tool_block.id, "Draft resolution recorded."))
+                messages.append(tool_result_message(tool_block.id, "Draft resolution recorded."))
                 phase = "closing"
 
             if phase == "dispatch":

@@ -3,5 +3,6 @@ __pycache__/
 *.pyc
 data/*.db
 data/*.jsonl
+output/
 .env
 .claude/settings.local.json

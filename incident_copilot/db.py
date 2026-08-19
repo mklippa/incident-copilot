@@ -1,9 +1,10 @@
 """SQLite schema and connection helpers for Incident Copilot."""
 
 import sqlite3
-from pathlib import Path
 
-DB_PATH = Path(__file__).resolve().parent.parent / "data" / "incident_copilot.db"
+from incident_copilot.paths import DATA_DIR
+
+DB_PATH = DATA_DIR / "incident_copilot.db"
 
 SCHEMA = """
 CREATE TABLE customers (
@@ -36,7 +37,6 @@ CREATE TABLE resolutions (
 
 
 def connect() -> sqlite3.Connection:
-    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
